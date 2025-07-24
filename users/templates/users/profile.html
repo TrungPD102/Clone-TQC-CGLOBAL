@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+    {{ block.super }}
+    {# Link đến forms.css nếu chưa có trong base template hoặc muốn style riêng #}
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+    <style>
+        .profile-avatar-current {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 3px solid #eee;
+            object-fit: cover;
+        }
+        .profile-email-display {
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 20px;
+            padding: 10px;
+            padding-left: 0px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container post-form-container profile-container">
+    <h2>{{ page_title }}</h2>
+    <hr>
+
+    <div class="mb-3">
+        <p class="profile-email-display">
+            <strong>Email:</strong> {{ current_user.email }}
+        </p>
+    </div>
+
+
+    <form method="POST" enctype="multipart/form-data" class="styled-form">
+        {% csrf_token %}
+
+        {# Hiển thị lỗi chung của form #}
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger p-2 mb-3">
+                {% for error in form.non_field_errors %}
+                    <p class="mb-0">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {# Render các trường form (Họ tên, Mô tả, Avatar mới) #}
+        <div class="form-field mb-3">
+            <label for="{{ form.ho_ten.id_for_label }}" class="form-label">{{ form.ho_ten.label }}</label>
+            {{ form.ho_ten }}
+            {% if form.ho_ten.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.ho_ten.errors %}{{ error }}{% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-field mb-3">
+            <label for="{{ form.mo_ta.id_for_label }}" class="form-label">{{ form.mo_ta.label }}</label>
+            {{ form.mo_ta }}
+            {% if form.mo_ta.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.mo_ta.errors %}{{ error }}{% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-field mb-3">
+            <label for="{{ form.avatar.id_for_label }}" class="form-label">{{ form.avatar.label }}</label>
+            {{ form.avatar }}
+             {% if form.avatar.help_text %}
+                <small class="form-text text-muted d-block mt-1">{{ form.avatar.help_text|safe }}</small>
+            {% endif %}
+            {% if form.avatar.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.avatar.errors %}{{ error }}{% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <hr>
+        <div class="form-actions mt-3">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Cập Nhật Thông Tin
+            </button>
+            {# Có thể thêm link Đổi mật khẩu ở đây sau này #}
+            {# <a href="{% url 'password_change' %}" class="btn btn-outline-secondary ms-2">Đổi Mật Khẩu</a> #}
+        </div>
+    </form>
+</div>
+{% endblock %}

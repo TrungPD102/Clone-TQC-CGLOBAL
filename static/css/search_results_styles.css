@@ -1,0 +1,165 @@
+.search-results-container {
+    margin-top: 30px;
+    margin-bottom: 40px;
+    animation: fadeIn 0.5s ease-in-out; /* Hiệu ứng xuất hiện nhẹ nhàng */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.search-results-container h1 {
+    color: #0047AB; /* Màu chủ đạo */
+    font-weight: 600;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+/* Form tìm kiếm lại (tương tự top-nav nhưng có thể tùy chỉnh thêm) */
+.search-again-form {
+    margin-bottom: 35px;
+    display: flex;
+    max-width: 700px; /* Có thể cho rộng hơn chút */
+    margin-left: auto;  /* Căn giữa form */
+    margin-right: auto; /* Căn giữa form */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Thêm chút bóng đổ */
+    border-radius: 5px;
+    overflow: hidden; /* Để bo góc cho button bên trong */
+}
+
+.search-again-form .search-input {
+    flex-grow: 1;
+    padding: 12px 18px; /* Padding lớn hơn cho dễ nhìn */
+    border: 1px solid #ddd;
+    border-right: none; /* Bỏ viền phải để liền với button */
+    font-size: 1rem;
+    border-radius: 5px 0 0 5px;
+    transition: border-color 0.2s ease;
+}
+.search-again-form .search-input:focus {
+    outline: none;
+    border-color: #0047AB;
+    box-shadow: 0 0 0 0.2rem rgba(0, 71, 171, 0.15);
+}
+
+.search-again-form .search-button {
+    background-color: #0047AB;
+    color: white;
+    border: none;
+    padding: 0 20px; /* Padding ngang cho button */
+    cursor: pointer;
+    font-size: 1rem; /* Đồng bộ với input */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+.search-again-form .search-button:hover {
+    background-color: #003380;
+}
+.search-again-form .search-button i {
+    font-size: 1.1em;
+}
+
+/* Thông báo số lượng kết quả */
+.search-results-container > p.mb-3 { /* Nhắm đến p ngay sau h1 và form */
+    font-size: 1.1em;
+    color: #555;
+    padding: 10px 15px;
+    background-color: #e9f3ff;
+    border: 1px solid #c6dfff;
+    border-radius: 4px;
+}
+
+/* Từng mục kết quả tìm kiếm */
+.search-result-item {
+    background-color: #fff;
+    border: 1px solid #e9e9e9;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    transition: box-shadow 0.2s ease-in-out;
+}
+.search-result-item:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.07);
+}
+
+.search-result-item h3 {
+    margin-top: 0;
+    margin-bottom: 8px;
+}
+.search-result-item h3 a {
+    color: #0047AB;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.3rem; /* Tăng kích thước tiêu đề kết quả */
+    transition: color 0.2s ease;
+}
+.search-result-item h3 a:hover {
+    color: #003380;
+    text-decoration: underline;
+}
+
+.search-result-meta {
+    font-size: 0.85rem;
+    color: #777;
+    margin-bottom: 12px;
+}
+.search-result-meta a { /* Link cho category */
+    color: #0056b3;
+    text-decoration: none;
+}
+.search-result-meta a:hover {
+    text-decoration: underline;
+}
+
+.search-result-excerpt {
+    color: #454545;
+    line-height: 1.7;
+    font-size: 0.95rem; /* Tăng nhẹ kích thước chữ excerpt */
+    margin-bottom: 15px;
+}
+
+.search-result-tags {
+    margin-top: 10px;
+}
+.search-result-tags strong {
+    color: #333;
+    font-weight: 500;
+}
+.search-result-tags .tag-item {
+    display: inline-block;
+    padding: .3em .7em; /* Tăng padding cho tag */
+    font-size: .8em;
+    background-color: #eef0f2; /* Màu nền tag nhẹ nhàng hơn */
+    color: #0047AB; /* Màu chữ tag */
+    border-radius: 15px; /* Bo tròn tag hơn */
+    margin-right: 6px;
+    margin-bottom: 6px;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.search-result-tags .tag-item:hover {
+    background-color: #0047AB;
+    color: white;
+}
+
+/* Thông báo khi không có kết quả */
+.no-results {
+    padding: 25px;
+    background-color: #f8f9fa;
+    border: 1px solid #e0e4e7;
+    border-radius: 5px;
+    text-align: center;
+    color: #555;
+    font-size: 1.1em;
+}
+.no-results strong {
+    color: #0047AB;
+}
+
+/* Responsive cho search results (nếu bạn dùng row/col của Bootstrap) */
+/* Nếu không, bạn có thể thêm media queries cho các elements trên nếu cần */

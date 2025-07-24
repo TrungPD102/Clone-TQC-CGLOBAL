@@ -1,0 +1,36 @@
+{% extends "base.html" %} {% block title %}Đăng nhập{% endblock %}
+
+{% block content %}
+<h2>Đăng nhập vào ProjectBlobWeb</h2>
+
+{% if form.errors %}
+    <p style="color: red;">Email hoặc mật khẩu của bạn không đúng. Vui lòng thử lại.</p>
+{% endif %}
+
+{% if next %}
+    {% if user.is_authenticated %}
+        <p>Tài khoản của bạn không có quyền truy cập trang này. Để tiếp tục, vui lòng đăng nhập với tài khoản có quyền.</p>
+    {% else %}
+        <p>Vui lòng đăng nhập để xem trang này.</p>
+    {% endif %}
+{% endif %}
+
+<form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+    <table>
+        <tr>
+            <td><label for="id_username">Email:</label></td>
+            <td><input type="email" name="username" autofocus autocapitalize="none" autocomplete="email" maxlength="254" required id="id_username"></td>
+        </tr>
+        <tr>
+            <td><label for="id_password">Mật khẩu:</label></td>
+            <td><input type="password" name="password" autocomplete="current-password" required id="id_password"></td>
+        </tr>
+    </table>
+    <input type="submit" value="Đăng nhập">
+    <input type="hidden" name="next" value="{{ next }}">
+</form>
+
+{# Optional: Thêm link quên mật khẩu #}
+{# <p><a href="{% url 'password_reset' %}">Quên mật khẩu?</a></p> #}
+{% endblock %}

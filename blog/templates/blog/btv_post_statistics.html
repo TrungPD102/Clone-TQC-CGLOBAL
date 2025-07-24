@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_title %}{{ page_title|default:"Thống Kê Lượt Xem" }}{% endblock %}
+
+{% block extra_head %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/author_dashboard_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+    <!-- <div class="author-sidebar-title">Quản Lý & Thống Kê</div>
+    <ul class="author-sidebar-menu">
+        <li><a href="{% url 'blog:btv_manage_posts' %}?status={{Post.Status.CHO_DUYET}}">Chờ duyệt ({{ sidebar_counts.pending|default:0 }})</a></li>
+        <li><a href="{% url 'blog:btv_manage_posts' %}?status=APPROVED_ALL">Tổng số đã duyệt ({{ sidebar_counts.approved_total|default:0 }})</a></li>
+        <li><a href="{% url 'blog:btv_manage_posts' %}?status=REJECTED_BY_ME">Đã từ chối bởi bạn ({{ sidebar_counts.rejected_by_current_btv|default:0 }})</a></li>
+        <hr>
+        <li><a href="{% url 'blog:btv_scheduled_posts' %}">Lịch Đăng Bài</a></li>
+        <li class="{% if active_sidebar_link == 'post_statistics' %}active-sidebar-item{% endif %}">
+            <a href="{% url 'blog:btv_post_statistics' %}">Thống Kê Lượt Xem</a>
+        </li>
+    </ul> -->
+
+<div class="author-content-header">
+    <h1 class="author-page-title">{{ page_title }}</h1>
+</div>
+
+{% if posts_with_stats %}
+    <table class="author-articles-table">
+        <thead>
+            <tr>
+                <th>Tiêu đề Bài Viết</th>
+                <th>Tác giả</th>
+                <th>Trạng thái</th>
+                <th>Ngày Xuất Bản</th>
+                <th style="text-align: right;">Lượt Xem</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post_stat in posts_with_stats %}
+            <tr>
+                <td>
+                    <a href="{% url 'blog:post_detail' post_stat.slug %}" target="_blank" title="Xem bài viết gốc">{{ post_stat.title|truncatewords:10 }}</a>
+                </td>
+                <td>{{ post_stat.author.ho_ten|default:post_stat.author.email }}</td>
+                <td>
+                     <span class="badge
+                        {% if post_stat.status == 'NHAP' %}status-draft{% elif post_stat.status == 'CHODUYET' %}status-pending{% elif post_stat.status == 'DADUYET' %}status-approved-editor{% elif post_stat.status == 'DAXUATBAN' %}status-published{% elif post_stat.status == 'TUCHOI' %}status-rejected{% endif %}
+                    ">
+                        {{ post_stat.get_status_display }}
+                    </span>
+                </td>
+                <td>{{ post_stat.publish_at|date:"d/m/Y H:i"|default:"Chưa xuất bản" }}</td>
+                <td style="text-align: right; font-weight: bold;">{{ post_stat.view_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="alert-info-custom" style="margin-top: 20px;">
+        Chưa có dữ liệu thống kê lượt xem.
+    </div>
+{% endif %}
+{% endblock content %}

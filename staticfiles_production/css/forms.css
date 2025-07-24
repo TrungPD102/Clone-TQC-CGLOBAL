@@ -1,0 +1,187 @@
+.post-form-container {
+    background-color: #ffffff; /* Nền trắng cho khu vực form */
+    padding: 25px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Bóng đổ nhẹ nhàng */
+    margin-top: 20px; /* Khoảng cách với các element phía trên */
+    margin-bottom: 30px;
+}
+
+.post-form-container h2 {
+    color: #0047AB; /* Màu tiêu đề chính (giống màu theme) */
+    padding-top: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e0e0e0; /* Đường gạch chân tiêu đề */
+    font-size: 22px;
+}
+
+.styled-form {
+    padding-top: 10px;
+}
+
+.styled-form .form-field {
+    margin-bottom: 20px; /* Khoảng cách giữa các field */
+}
+
+.styled-form .form-label {
+    display: block; /* Đảm bảo label chiếm một hàng */
+    font-weight: bold;
+    color: #333; /* Màu chữ cho label */
+    margin-bottom: 8px; /* Khoảng cách từ label đến input */
+    font-size: 15px;
+}
+
+/* Style chung cho các input, textarea */
+.styled-form .form-control,
+.styled-form .form-control-file {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da; /* Viền xám nhạt */
+    border-radius: 4px; /* Bo góc nhẹ */
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.styled-form .form-control:focus {
+    border-color: #80bdff; /* Màu viền khi focus (giống Bootstrap) */
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25); /* Bóng mờ khi focus */
+}
+
+.styled-form textarea.form-control {
+    min-height: 150px; /* Chiều cao tối thiểu cho textarea */
+    resize: vertical; /* Cho phép thay đổi chiều cao theo chiều dọc */
+}
+
+/* Style cho input file (ảnh) */
+.styled-form .form-control-file {
+    padding: 8px; /* Điều chỉnh padding nếu cần */
+}
+.styled-form .form-control-file:focus {
+    /* Có thể không cần box-shadow cho input file */
+    border-color: #80bdff;
+    outline: 0;
+}
+
+/* Hiển thị ảnh hiện tại (nếu có, khi chỉnh sửa) */
+.styled-form p.mt-2 { /* class mt-2 của Bootstrap */
+    font-size: 0.9em;
+    color: #555;
+}
+.styled-form p.mt-2 a {
+    color: #0047AB;
+    text-decoration: none;
+}
+.styled-form p.mt-2 a:hover {
+    text-decoration: underline;
+}
+
+
+/* Style cho danh sách checkbox chọn Tags */
+.styled-form .tags-checkbox-list {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 15px;
+    max-height: 180px; /* Giới hạn chiều cao, có thanh cuộn */
+    overflow-y: auto;
+    background-color: #f8f9fa; /* Nền hơi xám nhẹ cho vùng tags */
+}
+
+.styled-form .tags-checkbox-list .form-check {
+    margin-bottom: 10px; /* Khoảng cách giữa các checkbox tag */
+    display: flex; /* Để căn chỉnh input và label dễ hơn nếu cần */
+    align-items: center;
+}
+.styled-form .tags-checkbox-list .form-check:last-child {
+    margin-bottom: 0;
+}
+
+.styled-form .tags-checkbox-list .form-check input[type="checkbox"] {
+    margin-right: 8px;
+    margin-top: 0; /* Reset margin top của checkbox nếu trình duyệt mặc định */
+    transform: scale(1.1); /* Làm checkbox to hơn chút (tùy chọn) */
+}
+
+.styled-form .tags-checkbox-list .form-check-label {
+    font-weight: normal; /* Bỏ bold cho label của tag */
+    color: #333;
+    font-size: 14px;
+}
+
+/* Hiển thị lỗi của form */
+.styled-form .invalid-feedback.d-block {
+    color: #dc3545; /* Màu đỏ cho lỗi */
+    font-size: 0.875em; /* Cỡ chữ nhỏ hơn cho lỗi */
+    margin-top: 5px; /* Khoảng cách từ input đến lỗi */
+}
+
+/* Khu vực các nút actions (Lưu nháp, Gửi duyệt, Hủy) */
+.styled-form .form-actions {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid #e0e0e0; /* Đường kẻ phân cách */
+    display: flex;
+    gap: 10px; /* Khoảng cách giữa các nút */
+    justify-content: flex-end; /* Đẩy các nút về bên phải (tùy chọn) */
+}
+
+.styled-form .form-actions .btn {
+    padding: 10px 20px; /* Kích thước nút */
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 4px;
+    text-decoration: none; /* Cho thẻ <a> dạng nút */
+    display: inline-flex; /* Để icon và text căn giữa */
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.styled-form .form-actions .btn i {
+    margin-right: 6px; /* Khoảng cách giữa icon và text */
+}
+
+/* Style cho từng loại nút (dựa trên class của Bootstrap nếu bạn dùng, hoặc tự định nghĩa) */
+.styled-form .form-actions .btn-primary {
+    background-color: #0047AB; /* Màu chính */
+    border-color: #0047AB;
+    color: white;
+}
+.styled-form .form-actions .btn-primary:hover {
+    background-color: #003380;
+    border-color: #003380;
+}
+
+.styled-form .form-actions .btn-secondary {
+    background-color: #6c757d; /* Màu phụ */
+    border-color: #6c757d;
+    color: white;
+}
+.styled-form .form-actions .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.styled-form .form-actions .btn-outline-secondary {
+    color: #6c757d;
+    border-color: #6c757d;
+    background-color: transparent;
+}
+.styled-form .form-actions .btn-outline-secondary:hover {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+/* Alert lỗi chung của form (nếu bạn dùng class alert của Bootstrap) */
+.styled-form .alert.alert-danger {
+    padding: 10px 15px;
+    font-size: 0.9em;
+}
+.styled-form .alert.alert-danger p {
+    margin-bottom: 0;
+}

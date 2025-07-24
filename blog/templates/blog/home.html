@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %} 
+
+{% block extra_head %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+{% endblock %}
+
+{% block title %}Trang Chủ - {{ block.super }}{% endblock %}
+
+{% block content %}
+<section class="hero-banner">
+    <img src="https://i.pinimg.com/736x/c3/44/be/c344be92ae0d8f07c739607eb2727d82.jpg" alt="Shipping Container Port" class="hero-image">
+    <div class="hero-overlay">
+        <h1 class="hero-title">CHỨNG NHẬN TIÊU CHUẨN QUỐC TẾ ĐA LĨNH VỰC</h1>
+        <p class="hero-subtitle">TẦM NHÌN TOÀN CẦU CHO DOANH NGHIỆP VÀ SẢN PHẨM VIỆT NAM</p>
+    </div>
+</section>
+
+<section class="certification-card-section" style="padding-top:30px; padding-bottom:30px;">
+    <div class="certification-card">
+        <div class="certification-content">
+            <div class="certification-info">
+                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/TQC%20logo-miijgaCC6UNkZCidtknVeuLodvPRrm.png" alt="TQC Logo" class="certification-logo">
+                <h2 class="certification-title">CHỨNG NHẬN HỢP QUY</h2>
+                <h3 class="certification-subtitle">THỰC ĂN THỦY SẢN</h3>
+                <a href="#" class="certification-button">ĐĂNG KÝ NGAY</a>
+                <div class="certification-contact">
+                    <div class="contact-item">
+                        <i class="fas fa-phone contact-icon"></i>
+                        <span>0909 XXX XXXX</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope contact-icon"></i>
+                        <span>info@tqc.vn</span>
+                    </div>
+                </div>
+            </div>
+            <div class="certification-image">
+                <img  src="https://tqc.vn/pic/Service/images/th%E1%BB%A9c%20s%C4%83n%20th%E1%BB%A7y%20s%E1%BA%A3n.jpg" width="300px" alt="Seafood Certification">
+            </div>
+        </div>
+    </div>
+</section>
+
+{# --- PHẦN BÀI VIẾT GẦN ĐÂY ĐƯỢC CẬP NHẬT --- #}
+<section class="article-section container"> {# Thêm class container để giới hạn chiều rộng và căn giữa #}
+    <div class="section-header">
+        <h2 class="section-title">Bài viết gần đây</h2>
+    </div>
+
+    {% if latest_posts %}
+        <div class="recent-articles-grid-container">
+            {% for post in latest_posts %}
+            <article class="recent-article-card">
+                <div class="recent-article-image-wrapper">
+                    <a href="{% url 'blog:post_detail' post.slug %}">
+                        <img src="{% if post.image %}{{ post.image.url }}{% else %}{% static 'images/default_post_image.jpg' %}{% endif %}" alt="{{ post.title }}">
+                    </a>
+                </div>
+                <div class="recent-article-info">
+                    <h3 class="recent-article-title">
+                        <a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a>
+                    </h3>
+                    <p class="recent-article-date">{{ post.publish_at|date:"d/m/Y"|default:post.created_at|date:"d/m/Y" }}</p>
+                    <p class="recent-article-excerpt">
+                        {{ post.content|striptags|truncatewords:20 }} {# Loại bỏ tag HTML, lấy 20 từ đầu #}
+                    </p>
+                    <a href="{% url 'blog:post_detail' post.slug %}" class="recent-article-read-more">Xem thêm »</a>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Chưa có bài viết nào để hiển thị.</p>
+    {% endif %}
+</section>
+
+<section class="article-section">
+    <div class="section-header">
+        <h2 class="section-title">Bài viết phổ biến</h2>
+    </div>
+    <div class="article-grid">
+        {# Lặp qua các bài viết phổ biến ở đây #}
+        <div class="grid-card">
+            <div class="grid-image">
+                <img src="https://tqc.vn/pic/Service/images/638175138029134722.png.ashx" alt="Certification">
+            </div>
+            <div class="grid-info">
+                <h3 class="grid-title">DỊCH VỤ CHỨNG NHẬN HỢP QUY VẬT LIỆU XÂY DỰNG TRỌN GÓI</h3>
+                <a href="#" class="grid-button">Xem chi tiết »</a>
+            </div>
+        </div>
+        </div>
+</section>
+
+{% endblock %}

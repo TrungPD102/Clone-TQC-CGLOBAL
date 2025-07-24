@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/category_posts_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container category-page-container"> {# Sử dụng class mới #}
+    <div class="row">
+        <div class="col-md-8"> {# Phần nội dung chính #}
+            <h1 class="category-title-header">{{ page_title }}</h1> {# Class mới cho tiêu đề #}
+
+            {% if posts_in_category %}
+                {% for post in posts_in_category %}
+                    <article class="post-preview-item mb-4"> {# Class mới cho từng bài #}
+                        {% if post.image %}
+                            <a href="{% url 'blog:post_detail' post.slug %}" class="post-main-image-link">
+                                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid rounded mb-3">
+                            </a>
+                        {% endif %}
+                        <h2><a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a></h2>
+                        <p class="post-preview-meta">
+                            Đăng bởi {{ post.author.ho_ten|default:post.author.email }} vào {{ post.publish_at|date:"d/m/Y"|default:post.created_at|date:"d/m/Y" }}
+                            {% if post.category %}
+                                {# Không cần hiển thị lại category ở đây vì đã là trang của category đó #}
+                            {% endif %}
+                        </p>
+                        <p class="post-preview-excerpt">{{ post.content|striptags|truncatewords_html:35|safe }}</p>
+                        <div class="post-preview-read-more">
+                            <a href="{% url 'blog:post_detail' post.slug %}" class="btn btn-primary btn-sm">Đọc tiếp <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </article>
+                {% endfor %}
+                {# PHÂN TRANG SẼ THÊM Ở ĐÂY #}
+            {% else %}
+                <p class="no-posts-message">Chưa có bài viết nào trong đề tài "{{ category.ten_de_tai }}".</p>
+            {% endif %}
+        </div>
+
+        <aside class="col-md-4 category-sidebar"> {# Class mới cho sidebar #}
+            <div class="sidebar-widget"> {# Class mới cho widget #}
+                <h4>Các Đề Tài Khác</h4>
+                <ul class="list-unstyled mb-0">
+                    {% for cat in all_blog_categories %} {# Sử dụng all_blog_categories từ context processor #}
+                        <li class="{% if category and category.slug == cat.slug %}active{% endif %}"> {# Làm nổi bật category hiện tại #}
+                            <a href="{% url 'blog:posts_by_category' cat.slug %}">{{ cat.ten_de_tai }}</a>
+                        </li>
+                    {% empty %}
+                        <li>Chưa có đề tài nào.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {# Thêm các widget khác cho sidebar nếu muốn #}
+        </aside>
+    </div>
+</div>
+{% endblock %}

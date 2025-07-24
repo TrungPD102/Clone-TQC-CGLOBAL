@@ -1,0 +1,171 @@
+.category-page-container { /* Class cho div bọc row trong template */
+    margin-top: 30px;
+    margin-bottom: 40px;
+    animation: fadeInSmooth 0.6s ease-out;
+}
+
+@keyframes fadeInSmooth {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tiêu đề chính của trang (Tên Đề Tài) */
+.category-title-header {
+    color: #0047AB; /* Màu chủ đạo */
+    font-weight: 700; /* Đậm hơn */
+    font-size: 2.2rem; /* To hơn */
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    display: inline-block; /* Để border chỉ theo độ dài chữ */
+}
+
+/* Mỗi bài viết trong danh sách (phần nội dung chính) */
+.post-preview-item {
+    background-color: #ffffff;
+    border: 1px solid #e0e5e9;
+    border-radius: 8px; /* Bo góc nhiều hơn */
+    padding: 20px 25px; /* Tăng padding */
+    margin-bottom: 30px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04); /* Bóng đổ tinh tế hơn */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+.post-preview-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.post-preview-item h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+.post-preview-item h2 a {
+    color: #003380; /* Màu tiêu đề bài viết đậm hơn */
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.6rem; /* Kích thước tiêu đề bài viết */
+    transition: color 0.2s ease;
+}
+.post-preview-item h2 a:hover {
+    color: #0056b3; /* Màu khi hover tiêu đề */
+    text-decoration: underline;
+}
+
+.post-preview-item .post-main-image-link img { /* Ảnh đại diện của bài viết */
+    border-radius: 6px; /* Bo góc ảnh */
+    margin-bottom: 15px;
+    max-height: 350px; /* Giới hạn chiều cao ảnh */
+    width: 100%;
+    object-fit: cover;
+    border: 1px solid #eee;
+}
+
+.post-preview-meta { /* Thông tin tác giả, ngày đăng, đề tài */
+    font-size: 0.88em;
+    color: #6c757d; /* Màu xám cho meta */
+    margin-bottom: 12px;
+}
+.post-preview-meta a {
+    color: #0056b3; /* Màu link trong meta */
+    text-decoration: none;
+    font-weight: 500;
+}
+.post-preview-meta a:hover {
+    text-decoration: underline;
+}
+.post-preview-meta .author-name { /* Nếu bạn có class riêng cho tên tác giả */
+    /* font-weight: bold; */
+}
+
+.post-preview-excerpt { /* Đoạn trích của bài viết */
+    color: #454f5b; /* Màu chữ đoạn trích */
+    font-size: 0.95rem; /* Kích thước chữ */
+    line-height: 1.7;
+    margin-bottom: 18px;
+}
+
+.post-preview-read-more .btn { /* Nút "Đọc tiếp" */
+    background-color: #0047AB;
+    border-color: #0047AB;
+    color: white;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 20px; /* Bo tròn nút nhiều hơn */
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+.post-preview-read-more .btn:hover {
+    background-color: #003380;
+    border-color: #003380;
+}
+.post-preview-read-more .btn i { /* Icon trong nút (nếu có) */
+    margin-left: 5px;
+}
+
+
+/* Sidebar (Danh sách các Đề Tài Khác) */
+.category-sidebar .sidebar-widget { /* Class cho div bọc sidebar */
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+    margin-bottom: 25px;
+}
+.category-sidebar .sidebar-widget h4 {
+    font-size: 1.25rem;
+    color: #0047AB;
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+.category-sidebar .list-unstyled { /* Cho ul */
+    padding-left: 0;
+    list-style: none;
+}
+.category-sidebar .list-unstyled li {
+    margin-bottom: 8px;
+}
+.category-sidebar .list-unstyled li a {
+    color: #337ab7; /* Màu link đề tài trong sidebar */
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s ease;
+    display: block; /* Để dễ click hơn */
+    padding: 5px 0;
+}
+.category-sidebar .list-unstyled li a:hover {
+    color: #0047AB;
+    text-decoration: underline;
+}
+.category-sidebar .list-unstyled li.active a { /* Nếu bạn muốn làm nổi bật đề tài hiện tại */
+    font-weight: bold;
+    color: #0047AB;
+}
+
+/* Thông báo khi không có bài viết */
+.no-posts-message {
+    padding: 20px;
+    background-color: #fef3cd; /* Nền vàng nhạt cho thông báo */
+    border: 1px solid #ffeeba;
+    border-left: 5px solid #ffc107; /* Viền vàng đậm bên trái */
+    border-radius: 4px;
+    color: #856404; /* Màu chữ */
+    text-align: center;
+}
+
+/* Phân trang (nếu bạn thêm sau này) */
+.pagination {
+    margin-top: 30px;
+    justify-content: center;
+}
+.pagination .page-item .page-link {
+    color: #0047AB;
+}
+.pagination .page-item.active .page-link {
+    background-color: #0047AB;
+    border-color: #0047AB;
+    color: white;
+}
+.pagination .page-item.disabled .page-link {
+    color: #6c757d;
+}

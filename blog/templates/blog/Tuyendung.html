@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tuyển Dụng - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* CSS được lấy từ file Tuyendung.html gốc, bạn có thể tách ra file riêng sau */
+        /* Banner (Nếu bạn muốn giữ lại banner riêng cho trang này) */
+        .banner {
+            position: relative;
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        .banner-image {
+            width: 100%;
+            height: auto; /* Hoặc một chiều cao cụ thể */
+            max-height: 350px; /* Giới hạn chiều cao banner */
+            object-fit: cover;
+            display: block;
+        }
+        .banner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .banner-title {
+            font-size: 42px; /* Điều chỉnh cho phù hợp */
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .banner-logo { /* Logo TQC trong banner (nếu có) */
+            max-width: 250px;
+            margin-bottom: 15px;
+        }
+        .banner-subtitle {
+            font-size: 22px;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Main Content for Recruitment Page */
+        .recruitment-main-content { /* Đổi tên class để tránh xung đột với main-content gốc */
+            padding: 30px 0;
+        }
+
+        .recruitment-heading {
+            color: #0047AB;
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px 0;
+            margin: 0 0 30px 0; /* Thêm margin bottom */
+            border-bottom: 2px solid #e0e0e0; /* Đường kẻ rõ hơn */
+        }
+        .recruitment-title-main { /* Class cho h1 "Tuyển Dụng" chính */
+            color: #0047AB;
+            font-size: 42px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin: 0;
+            letter-spacing: 1px;
+        }
+
+        .about-image-recruitment { /* Đổi tên class */
+            width: 100%; /* Cho ảnh chiếm full width của container */
+            max-width: 900px; /* Giới hạn chiều rộng tối đa */
+            margin: 0 auto 40px; /* Căn giữa và thêm margin bottom */
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .about-image-recruitment img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Job Section */
+        .job-section {
+            margin-bottom: 50px;
+        }
+        .job-section .section-header { /* Style cho header của job section */
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .job-section .section-title {
+            color: #333;
+            font-size: 28px; /* Tăng kích thước */
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .job-section .section-subtitle {
+            color: #0047ab;
+            font-size: 36px; /* Tăng kích thước */
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .job-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .job-card { /* Style đã khá tốt, có thể giữ nguyên hoặc tinh chỉnh */
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e0e0e0;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        .job-title {
+            padding: 20px;
+            font-size: 1.15rem; /* Cỡ chữ tiêu đề công việc */
+            font-weight: bold;
+            color: #0047ab;
+            border-bottom: 1px solid #e0e0e0;
+            background-color: #f8f9fa; /* Nền nhẹ cho tiêu đề card */
+        }
+        .job-details { padding: 20px; }
+        .job-info { display: flex; align-items: center; margin-bottom: 12px; font-size: 14px; color: #555;}
+        .job-info i { margin-right: 10px; color: #0047ab; width: 16px; text-align: center;}
+        .job-company { padding: 10px 20px; background-color: #f0f5ff; font-size: 13px; color: #0047ab; font-style: italic;}
+        .job-apply { padding: 15px 20px; text-align: center; border-top: 1px solid #e0e0e0;}
+        .apply-button { /* Style đã tốt */ }
+
+        /* Pagination (Nếu cần dữ liệu động) */
+        .pagination { display: flex; justify-content: center; margin-top: 30px; }
+        .page-dot { width: 12px; height: 12px; background-color: #ccc; border-radius: 50%; margin: 0 5px; cursor: pointer; }
+        .page-dot.active { background-color: #0047ab; }
+
+        /* Work Environment Section */
+        .work-env-section { margin-bottom: 50px; background-color: #fff; padding: 40px 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);}
+        .work-env-title { color: #0047ab; font-size: 28px; font-weight: bold; margin-bottom: 10px; text-align: center;}
+        .work-env-grid { display: flex; grid-template-columns: 1fr; gap: 30px; align-items: center; } /* Mặc định 1 cột cho mobile-first */
+        .work-env-subtitle { font-size: 1.2rem; color: #003a8c; margin-bottom: 10px; font-weight: 600; margin-top: 20px; }
+        .work-env-text { font-size: 1rem; line-height: 1.7; color: #333; margin-bottom: 20px; }
+        .work-env-logo { display: flex; justify-content: center; margin-top: 20px; margin-left: 100px;}
+        .work-env-logo img { max-width: 180px; }
+        .cta-button { /* Style đã tốt */ }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container recruitment-main-content">
+
+
+    <div class="recruitment-heading">
+        <h1 class="recruitment-title-main">Tuyển Dụng</h1>
+    </div>
+
+    <section class="job-section">
+        <div class="section-header">
+            <h2 class="section-title">Tuyển dụng</h2>
+            <h3 class="section-subtitle">Cơ hội nghề nghiệp</h3>
+        </div>
+
+        <div class="job-grid">
+            <div class="job-card">
+                <div class="job-title">Trực Page</div>
+                <div class="job-details">
+                    <div class="job-info"><i class="fas fa-map-marker-alt"></i><span>Tầng 2, Tòa nhà VINACCO BUILDING, TP Đà Nẵng</span></div>
+                    <div class="job-info"><i class="far fa-calendar-alt"></i><span>Hạn tuyển: 20/4/2025</span></div>
+                </div>
+                <div class="job-company">Trực thuộc TQC CGLOBAL</div>
+                <div class="job-apply"><a href="#" class="apply-button">ỨNG TUYỂN NGAY</a></div>
+            </div>
+            <div class="job-card">
+                <div class="job-title">Chuyên viên kiểm nghiệm</div>
+                <div class="job-details">
+                    <div class="job-info"><i class="fas fa-map-marker-alt"></i><span>Tầng 2, Tòa nhà VINACCO BUILDING, TP Đà Nẵng</span></div>
+                    <div class="job-info"><i class="far fa-calendar-alt"></i><span>Hạn tuyển: 20/4/2025</span></div>
+                </div>
+                <div class="job-company">Trực thuộc TQC CGLOBAL</div>
+                <div class="job-apply"><a href="#" class="apply-button">ỨNG TUYỂN NGAY</a></div>
+            </div>
+             <div class="job-card">
+                <div class="job-title">Kỹ thuật viên phòng Lab</div>
+                <div class="job-details">
+                    <div class="job-info"><i class="fas fa-map-marker-alt"></i><span>Tầng 2, Tòa nhà VINACCO BUILDING, TP Đà Nẵng</span></div>
+                    <div class="job-info"><i class="far fa-calendar-alt"></i><span>Hạn tuyển: 20/4/2025</span></div>
+                </div>
+                <div class="job-company">Trực thuộc TQC CGLOBAL</div>
+                <div class="job-apply"><a href="#" class="apply-button">ỨNG TUYỂN NGAY</a></div>
+            </div>
+             <div class="job-card">
+                <div class="job-title">Chuyên viên CSKH</div>
+                <div class="job-details">
+                    <div class="job-info"><i class="fas fa-map-marker-alt"></i><span>Tầng 2, Tòa nhà VINACCO BUILDING, TP Đà Nẵng</span></div>
+                    <div class="job-info"><i class="far fa-calendar-alt"></i><span>Hạn tuyển: 20/4/2025</span></div>
+                </div>
+                <div class="job-company">Trực thuộc TQC CGLOBAL</div>
+                <div class="job-apply"><a href="#" class="apply-button">ỨNG TUYỂN NGAY</a></div>
+            </div>
+            <!-- <div class="job-card">
+                <div class="job-title">Chuyên viên chứng nhận sản phẩm</div>
+                <div class="job-details">
+                    <div class="job-info"><i class="fas fa-map-marker-alt"></i><span>Tầng 2, Tòa nhà VINACCO BUILDING, TP Đà Nẵng</span></div>
+                    <div class="job-info"><i class="far fa-calendar-alt"></i><span>Hạn tuyển: 20/4/2025</span></div>
+                </div>
+                <div class="job-company">Trực thuộc TQC CGLOBAL</div>
+                <div class="job-apply"><a href="#" class="apply-button">ỨNG TUYỂN NGAY</a></div>
+            </div>
+             <div class="job-card">
+                <div class="job-title">Nhân viên quản trị website</div>
+                <div class="job-details">
+                    <div class="job-info"><i class="fas fa-map-marker-alt"></i><span>Tầng 2, Tòa nhà VINACCO BUILDING, TP Đà Nẵng</span></div>
+                    <div class="job-info"><i class="far fa-calendar-alt"></i><span>Hạn tuyển: 20/4/2025</span></div>
+                </div>
+                <div class="job-company">Trực thuộc TQC CGLOBAL</div>
+                <div class="job-apply"><a href="#" class="apply-button">ỨNG TUYỂN NGAY</a></div>
+            </div> -->
+        </div>
+
+        <div class="pagination">
+            <div class="page-dot active"></div>
+            <div class="page-dot"></div>
+        </div>
+    </section>
+
+    <section class="work-env-section">
+        <h2 class="work-env-title">Môi trường làm việc</h2>
+        <div class="work-env-grid">
+            <div class="work-env-content">
+                <h3 class="work-env-subtitle">Làm việc tại Trung tâm Kiểm nghiệm và Chứng nhận TQC CGLOBAL</h3>
+
+                <h4 class="work-env-subtitle">Môi trường làm việc hiệu quả</h4>
+                <p class="work-env-text">Tại TQC CGLOBAL, chúng tôi không chỉ chú trọng vào chất lượng sản phẩm mà còn đặt chất lượng con người và môi trường làm việc lên hàng đầu.</p>
+
+                <h4 class="work-env-subtitle">Mức lương và thưởng hấp dẫn</h4>
+                <p class="work-env-text">Chúng tôi hiểu rõ rằng để có nhân lực chất lượng, công ty cần tôn trọng và hậu đãi nhân viên một cách thỏa đáng cho những đóng góp của họ.</p>
+
+                <h4 class="work-env-subtitle">Cơ hội phát triển</h4>
+                <p class="work-env-text">Chúng tôi hiểu rõ rằng để có nhân lực chất lượng, công ty cần tôn trọng và hậu đãi nhân viên một cách thỏa đáng cho những đóng góp của họ.</p>
+            </div>
+            <div class="work-env-logo">
+                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/TQC%20logo-miijgaCC6UNkZCidtknVeuLodvPRrm.png" alt="TQC Logo">
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

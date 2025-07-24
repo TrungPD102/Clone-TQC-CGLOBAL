@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_title %}{{ page_title|default:"Quản Lý Lịch Đăng Bài" }}{% endblock %}
+
+{% block extra_head %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/author_dashboard_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="author-content-container">
+    <div class="author-sidebar">
+        <div class="author-sidebar-title">Quản Lý Duyệt Bài</div>
+        <ul class="author-sidebar-menu">
+            <li class="{% if current_status_filter == post_statuses.CHO_DUYET %}active-sidebar-item{% endif %}">
+                <a href="{% url 'blog:btv_manage_posts' %}?status={{ post_statuses.CHO_DUYET }}">Chờ duyệt ({{ sidebar_counts.pending|default:0 }})</a>
+            </li>
+            <li class="{% if current_status_filter == 'APPROVED_ALL' %}active-sidebar-item{% endif %}">
+                <a href="{% url 'blog:btv_manage_posts' %}?status=APPROVED_ALL">Tổng số đã duyệt ({{ sidebar_counts.approved_total|default:0 }})</a>
+            </li>
+            <li class="{% if current_status_filter == 'REJECTED_BY_ME' %}active-sidebar-item{% endif %}">
+                <a href="{% url 'blog:btv_manage_posts' %}?status=REJECTED_BY_ME">Đã từ chối bởi bạn ({{ sidebar_counts.rejected_by_current_btv|default:0 }})</a>
+            </li>
+            <hr>
+            <li class="{% if request.resolver_match.url_name == 'btv_scheduled_posts' or active_sidebar_link == 'scheduled_posts' %}active-sidebar-item{% endif %}">
+                <a href="{% url 'blog:btv_scheduled_posts' %}">Lịch Đăng Bài</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="author-main-content">
+        <div class="author-content-header">
+            <h1 class="author-page-title">{{ page_title }}</h1>
+            <div class="author-search-bar">
+                <form method="GET" action="{% url 'blog:btv_manage_posts' %}">
+                    {% if current_status_filter %}
+                        <input type="hidden" name="status" value="{{ current_status_filter }}">
+                    {% endif %}
+                    <input type="text" name="q_btv" class="author-search-input" placeholder="Tìm tiêu đề, tác giả..." value="{{ current_query }}">
+                    <button type="submit" class="author-search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {# === SECTION BÀI VIẾT ĐÃ XUẤT BẢN === #}
+        <section id="published-posts-section" class="mb-5">
+            <h4>Bài Viết Đã Xuất Bản</h4>
+            {% if published_posts %}
+                <table class="author-articles-table">
+                    <thead>
+                        <tr>
+                            <th>Tiêu đề</th>
+                            <th>Tác giả</th>
+                            <th>Ngày xuất bản</th>
+                            <th>Lượt xem</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for post in published_posts %}
+                        <tr>
+                            <td><a href="{% url 'blog:post_detail' post.slug %}" target="_blank" title="Xem bài viết (public)">{{ post.title|truncatewords:10 }}</a></td>
+                            <td>{{ post.author.ho_ten|default:post.author.email }}</td>
+                            <td>{{ post.publish_at|date:"H:i - d/m/Y" }}</td>
+                            <td style="text-align: center;">{{ post.views.count }}</td> {# Giả sử bạn có related_name='views' cho PostView #}
+                            <td>
+                                {# Form cho nút Gỡ Bài #}
+                                <form method="POST" action="{% url 'blog:btv_review_post_detail' post.slug %}" style="display:inline;" onsubmit="return confirm('Bạn có chắc chắn muốn GỠ bài viết \'{{ post.title|escapejs }}\' không? Bài viết sẽ được chuyển về trạng thái Đã Duyệt.');">
+                                    {% csrf_token %}
+                                    <button type="submit" name="unpublish_post" class="action-btn btn-unpublish" title="Gỡ bài viết này">
+                                        <i class="fas fa-eye-slash"></i> Gỡ Bài
+                                    </button>
+                                </form>
+                                <a href="{% url 'blog:btv_review_post_detail' post.slug %}" class="action-btn view-btn" title="Xem chi tiết (BTV)"><i class="fas fa-info-circle"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="alert-info-custom">Chưa có bài viết nào được xuất bản.</p>
+            {% endif %}
+        </section>
+
+        <hr class="section-divider">
+
+        {# === SECTION BÀI VIẾT ĐÃ ĐƯỢC LÊN LỊCH === #}
+        <section id="scheduled-posts-section" class="mb-5">
+            <h4>Bài Viết Đã Được Lên Lịch</h4>
+            {% if scheduled_posts %}
+                <table class="author-articles-table">
+                    <thead>
+                        <tr>
+                            <th>Tiêu đề</th>
+                            <th>Tác giả</th>
+                            <th>Lịch đăng</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for post in scheduled_posts %}
+                        <tr>
+                            <td><a href="{% url 'blog:btv_review_post_detail' post.slug %}">{{ post.title|truncatewords:10 }}</a></td>
+                            <td>{{ post.author.ho_ten|default:post.author.email }}</td>
+                            <td>{{ post.publish_at|date:"H:i - d/m/Y" }}</td>
+                            <td>
+                                <a href="{% url 'blog:btv_review_post_detail' post.slug %}" class="action-btn edit-btn" title="Xem & Sửa lịch"><i class="fas fa-calendar-alt"></i> Sửa lịch</a>
+                                {# Nút hủy lịch (sẽ cần view riêng hoặc logic trong view chi tiết) #}
+                                {# <form method="POST" action="#" style="display:inline;"> {% csrf_token %} <button type="submit" name="cancel_schedule" class="action-btn delete-btn"><i class="fas fa-calendar-times"></i> Hủy Lịch</button></form> #}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="alert-info-custom">Chưa có bài viết nào được lên lịch.</p>
+            {% endif %}
+        </section>
+
+        <hr class="section-divider">
+
+        {# === SECTION BÀI VIẾT SẴN SÀNG LÊN LỊCH === #}
+
+        <section id="schedulable-posts-section">
+            <h4>Bài Viết Sẵn Sàng Lên Lịch (Đã Duyệt)</h4>
+            {% if schedulable_posts %}
+                <table class="author-articles-table">
+                    <thead>
+                        <tr>
+                            <th>Tiêu đề</th>
+                            <th>Tác giả</th>
+                            <th>Ngày cập nhật</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for post in schedulable_posts %}
+                        <tr>
+                            <td><a href="{% url 'blog:btv_review_post_detail' post.slug %}">{{ post.title|truncatewords:10 }}</a></td>
+                            <td>{{ post.author.ho_ten|default:post.author.email }}</td>
+                            <td>{{ post.updated_at|date:"d/m/Y" }}</td>
+                            <td>
+                                <a href="{% url 'blog:btv_review_post_detail' post.slug %}" class="action-btn view-btn" title="Lên lịch"><i class="fas fa-calendar-plus"></i> Lên lịch</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="alert-info-custom">Không có bài viết nào đã duyệt sẵn sàng để lên lịch.</p>
+            {% endif %}
+        </section>
+    </div>
+</div>
+{% endblock content %}

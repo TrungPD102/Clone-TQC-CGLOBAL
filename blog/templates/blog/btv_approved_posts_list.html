@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block page_title %}{{ page_title|default:"Bài Đã Duyệt" }}{% endblock %}
+
+{% block extra_head_dashboard %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/author_dashboard_styles.css' %}">
+{% endblock %}
+
+{% block sidebar_dashboard %} {# HOẶC một block sidebar khác nếu bạn định nghĩa trong base.html #}
+    <div class="author-sidebar-title">Quản Lý Duyệt Bài</div>
+    <ul class="author-sidebar-menu">
+        <li class="{% if active_sidebar_link == 'pending_posts' %}active-sidebar-item{% endif %}">
+            <a href="{% url 'blog:btv_manage_posts' %}">Chờ duyệt ({{ sidebar_counts.pending|default:0 }})</a>
+        </li>
+        <li class="{% if active_sidebar_link == 'approved_posts' %}active-sidebar-item{% endif %}">
+            <a href="{% url 'blog:btv_approved_posts' %}">Tổng số đã duyệt ({{ sidebar_counts.approved_total|default:0 }})</a>
+        </li>
+        <li class="{% if active_sidebar_link == 'rejected_by_btv' %}active-sidebar-item{% endif %}">
+             {# URL này sẽ cần view riêng để hiển thị bài BTV này từ chối #}
+            <a href="#">Đã từ chối bởi bạn ({{ sidebar_counts.rejected_by_current_btv|default:0 }})</a>
+        </li>
+        <hr>
+        <li class="{% if active_sidebar_link == 'scheduled_posts' %}active-sidebar-item{% endif %}">
+            <a href="{% url 'blog:btv_scheduled_posts' %}">Lịch Đăng Bài</a></li>
+    </ul>
+{% endblock sidebar_dashboard %}
+
+{% block content_dashboard %} {# HOẶC {% block content %} nếu kế thừa từ base.html #}
+<div class="author-content-header"> {# Tái sử dụng class hoặc tạo class mới như btv-content-header #}
+    <h1 class="author-page-title approved-page-title">{{ page_title }}</h1>
+    <div class="author-search-bar">
+        <form method="GET" action="{% url 'blog:btv_approved_posts' %}">
+            <input type="text" name="q_approved" class="author-search-input" placeholder="Tìm trong bài đã duyệt..." value="{{ current_query }}">
+            <button type="submit" class="author-search-button">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+{% if approved_posts %}
+    <table class="author-articles-table"> {# Tái sử dụng class hoặc tạo class mới như btv-articles-table #}
+        <thead>
+            <tr>
+                <th>Tiêu đề</th>
+                <th>Tác giả</th>
+                <th>Trạng thái</th>
+                <th>Ngày duyệt/cập nhật</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in approved_posts %}
+            <tr>
+                <td>
+                    {# Link đến trang chi tiết BTV xem xét (có thể là trang này hoặc trang chi tiết công khai) #}
+                    <a href="{% url 'blog:btv_review_post_detail' post.slug %}" title="{{ post.title }}">{{ post.title|truncatewords:10 }}</a>
+                </td>
+                <td>{{ post.author.ho_ten|default:post.author.email }}</td>
+                <td>
+                     <span class="badge
+                        {% if post.status == 'DA_DUYET' %}status-approved-editor{% endif %}
+                        {% if post.status == 'DA_XUAT_BAN' %}status-published{% endif %}
+                    ">
+                        {{ post.get_status_display }}
+                    </span>
+                </td>
+                <td>{{ post.updated_at|date:"d/m/Y H:i" }}</td> {# Ngày bài viết được cập nhật (khi chuyển status) #}
+                <td>
+                    <a href="{% url 'blog:btv_review_post_detail' post.slug %}" class="action-btn view-btn" title="Xem chi tiết"><i class="fas fa-eye"></i></a>
+                    {% if post.status == "DA_DUYET" %}
+                        {# Nút để BTV vào trang chi tiết để có thể lên lịch #}
+                        <a href="{% url 'blog:btv_review_post_detail' post.slug %}" class="action-btn edit-btn" title="Lên lịch/Sửa lịch"><i class="fas fa-calendar-alt"></i></a>
+                    {% endif %}
+                    {# BTV có thể có quyền sửa bài trực tiếp ở đây nếu muốn #}
+                    {# <a href="{% url 'blog:edit_post' post.slug %}" class="action-btn edit-btn" title="Sửa nội dung"><i class="fas fa-edit"></i></a> #}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="alert-info-custom" style="margin-top: 20px;">
+        {% if current_query %}
+            Không tìm thấy bài viết nào đã duyệt với từ khóa "{{ current_query }}".
+        {% else %}
+            Hiện không có bài viết nào ở trạng thái đã duyệt hoặc đã xuất bản.
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock content_dashboard %}

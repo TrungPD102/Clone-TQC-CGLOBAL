@@ -1,0 +1,273 @@
+.author-content-container {
+    display: flex; /* Chia thành sidebar và nội dung chính */
+    margin-top: 20px; /* Khoảng cách với main-nav hoặc header từ base.html */
+    margin-bottom: 30px;
+    background-color: #f9f9f9; /* Nền nhẹ cho toàn bộ khu vực này */
+    border-radius: 5px; /* Bo góc nhẹ */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+/* Sidebar */
+.author-sidebar {
+    width: 240px; /* Độ rộng của sidebar */
+    background-color: #fff; /* Nền trắng cho sidebar */
+    padding: 20px 0;
+    border-right: 1px solid #e0e0e0; /* Đường kẻ phân cách với nội dung chính */
+    flex-shrink: 0; /* Không cho sidebar co lại khi không đủ không gian */
+}
+
+.author-sidebar-title {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    color: #0047AB; /* Màu chủ đạo */
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.author-sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.author-sidebar-menu li a {
+    display: block;
+    padding: 10px 20px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    border-bottom: 1px solid #f0f0f0; /* Đường kẻ mờ giữa các mục */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.author-sidebar-menu li a:hover,
+.author-sidebar-menu li a.active { /* Thêm class 'active' cho mục đang được chọn (nếu có JS) */
+    background-color: #e9f3ff; /* Màu nền khi hover/active */
+    color: #0047AB;
+    border-left: 3px solid #0047AB; /* Dấu hiệu active ở lề trái */
+    padding-left: 17px; /* Bù trừ cho border-left */
+}
+.author-sidebar-menu li:last-child a {
+    border-bottom: none;
+}
+.author-sidebar-menu hr {
+    margin: 10px 20px;
+    border: 0;
+    border-top: 1px solid #e0e0e0;
+}
+
+
+/* Nội dung chính (Main Content) */
+.author-main-content {
+    flex: 1; /* Chiếm hết không gian còn lại */
+    padding: 25px 30px;
+    background-color: #fff;
+}
+
+.author-content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.author-page-title {
+    font-size: 22px;
+    font-weight: bold;
+    color: #0047AB; /* Màu chủ đạo */
+}
+
+/* Thanh tìm kiếm */
+.author-search-bar {
+    display: flex;
+}
+.author-search-bar form {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden; /* Để bo góc hoạt động đúng với button bên trong */
+}
+
+.author-search-input {
+    padding: 8px 12px;
+    border: none; /* Bỏ viền của input, vì form đã có viền */
+    width: 220px; /* Điều chỉnh độ rộng nếu cần */
+    font-size: 14px;
+    outline: none;
+}
+
+.author-search-button {
+    background-color: #0047AB; /* Màu nút tìm kiếm */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.author-search-button:hover {
+    background-color: #003380;
+}
+.author-search-button i {
+    font-size: 1em; /* Kích thước icon search */
+}
+
+/* Bảng danh sách bài viết */
+.author-articles-table {
+    width: 100%;
+    border-collapse: collapse; /* Gộp viền cho đẹp */
+    margin-top: 10px;
+    font-size: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.author-articles-table th {
+    background-color: #f0f5e6; /* Màu nền header của bảng (giống top-nav) */
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600; /* Chữ đậm hơn cho header */
+    color: #333;
+    border-bottom: 2px solid #0047AB; /* Đường kẻ đậm hơn dưới header */
+}
+
+.author-articles-table td {
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 10px;    
+    border-bottom: 1px solid #e9e9e9; /* Đường kẻ mờ giữa các hàng */
+    vertical-align: middle; /* Căn giữa nội dung trong cell theo chiều dọc */
+}
+
+.author-articles-table tbody tr:hover {
+    background-color: #f9f9f9; /* Màu nền khi hover qua hàng */
+}
+
+.author-articles-table td a {
+    color: #0047AB;
+    text-decoration: none;
+    font-weight: 500;
+}
+.author-articles-table td a:hover {
+    text-decoration: underline;
+}
+
+/* CSS cho badge trạng thái (đã có trong HTML, giờ style cho nó) */
+.author-articles-table .badge {
+    font-size: 0.8em; /* Cỡ chữ badge */
+    padding: .35em .65em; /* Padding badge */
+    color: white;
+    border-radius: 10px; /* Bo tròn hơn */
+    font-weight: 500;
+    min-width: 90px; /* Độ rộng tối thiểu để các badge trông đều nhau */
+    text-align: center;
+    display: inline-block;
+}
+.author-articles-table .status-draft { background-color: #6c757d; }
+.author-articles-table .status-pending { background-color: #ffc107; color: #212529 !important; }
+.author-articles-table .status-approved-editor { background-color: #0dcaf0; color: #212529 !important; }
+.author-articles-table .status-published { background-color: #198754; }
+.author-articles-table .status-rejected { background-color: #dc3545; }
+
+/* CSS cho tag item */
+.author-articles-table .tag-item {
+    display: inline-block;
+    padding: .25em .5em;
+    font-size: .8em;
+    background-color: #e0e0e0; /* Màu nền tag */
+    color: #333; /* Màu chữ tag */
+    border-radius: 3px;
+    margin-right: 4px;
+    margin-bottom: 4px;
+}
+.author-articles-table .text-muted-light {
+    color: #888;
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+/* CSS cho các nút hành động trong bảng */
+.author-articles-table .action-btn {
+    padding: 5px 8px;
+    font-size: 0.85rem;
+    margin-right: 5px;
+    border-radius: 3px;
+    text-decoration: none;
+    color: white;
+    transition: opacity 0.2s ease;
+}
+.author-articles-table .action-btn:hover {
+    opacity: 0.8;
+}
+.author-articles-table .action-btn i {
+    /* font-size: 0.95em; */ /* Có thể không cần nếu icon đã ổn */
+}
+
+.author-articles-table .view-btn { background-color: #0d6efd; border: 1px solid #0d6efd;}
+.author-articles-table .edit-btn { background-color: #6c757d; border: 1px solid #6c757d;}
+.author-articles-table .delete-btn { background-color: #dc3545; border: 1px solid #dc3545;}
+
+/* Thông báo khi không có bài viết */
+.alert-info-custom {
+    margin-top: 20px;
+    padding: 15px 20px;
+    background-color: #e6f7ff;
+    border: 1px solid #b3e0ff;
+    border-left: 5px solid #007bff; /* Thêm điểm nhấn bên trái */
+    border-radius: 4px;
+    color: #0056b3;
+}
+.alert-info-custom a {
+    color: #004085;
+    font-weight: bold;
+    text-decoration: none;
+}
+.alert-info-custom a:hover {
+    text-decoration: underline;
+}
+
+.author-sidebar-menu li.active-sidebar-item a {
+    background-color: #d4eaff; /* Màu nền khác biệt cho mục active */
+    color: #0047AB;
+    font-weight: bold;
+    border-left: 3px solid #002b66; /* Đường kẻ đậm hơn */
+    padding-left: 17px;
+}
+/* 
+.author-page-title .filtered-status-badge {
+    font-size: 0.7em;
+    font-weight: normal;
+    color: #555;
+    background-color: #e9ecef;
+    padding: 3px 8px;
+    border-radius: 5px;
+    margin-left: 10px;
+    vertical-align: middle;
+} */
+
+
+#schedulable-posts-section {
+    padding-top: 10px;
+}
+
+
+        .btn-unpublish {
+            background-color: #ffc107; /* Màu vàng warning */
+            border-color: #ffc107;
+            color: #212529 !important; /* Chữ đen cho dễ đọc trên nền vàng */
+        }
+        .btn-unpublish:hover {
+            background-color: #e0a800;
+            border-color: #d39e00;
+        }
+        .section-divider { /* Đường kẻ phân cách các section */
+            margin-top: 30px;
+            margin-bottom: 30px;
+            border: 0;
+            border-top: 2px solid #e0e0e0;
+        }

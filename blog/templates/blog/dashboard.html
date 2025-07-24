@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2>Chào mừng đến Dashboard, {{ user.ho_ten|default:user.email }}!</h2>
+<p>Đây là khu vực dành cho người dùng đã đăng nhập.</p>
+<p>Vai trò của bạn: {{ user.get_role_display }}</p>
+{% endblock %}

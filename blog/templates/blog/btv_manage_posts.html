@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+
+<!-- {% block page_title %}{{ page_title|default:"Quản Lý Bài Viết BTV" }}{% endblock %} -->
+{% block title %}{{ page_title|default:"Quản Lý Bài Viết BTV" }} - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/author_dashboard_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="author-content-container">
+    <div class="author-sidebar">
+        <div class="author-sidebar-title">Quản Lý Bài Viết</div>
+        <ul class="author-sidebar-menu">
+            <li class="{% if current_status_filter == post_statuses.CHO_DUYET %}active-sidebar-item{% endif %}">
+                <a href="{% url 'blog:btv_manage_posts' %}?status={{ post_statuses.CHO_DUYET }}">Chờ duyệt ({{ sidebar_counts.pending|default:0 }})</a>
+            </li>
+            <li class="{% if current_status_filter == 'APPROVED_ALL' %}active-sidebar-item{% endif %}">
+                <a href="{% url 'blog:btv_manage_posts' %}?status=APPROVED_ALL">Tổng số đã duyệt ({{ sidebar_counts.approved_total|default:0 }})</a>
+            </li>
+            <li class="{% if current_status_filter == 'REJECTED_BY_ME' %}active-sidebar-item{% endif %}">
+                <a href="{% url 'blog:btv_manage_posts' %}?status=REJECTED_BY_ME">Đã từ chối bởi bạn ({{ sidebar_counts.rejected_by_current_btv|default:0 }})</a>
+            </li>
+            <hr>
+            <li class="{% if request.resolver_match.url_name == 'btv_scheduled_posts' or active_sidebar_link == 'scheduled_posts' %}active-sidebar-item{% endif %}">
+                <a href="{% url 'blog:btv_scheduled_posts' %}">Lịch Đăng Bài</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="author-main-content">
+        <div class="author-content-header">
+            <h1 class="author-page-title">{{ page_title }}</h1>
+            <div class="author-search-bar">
+                <form method="GET" action="{% url 'blog:btv_manage_posts' %}">
+                    {% if current_status_filter %}
+                        <input type="hidden" name="status" value="{{ current_status_filter }}">
+                    {% endif %}
+                    <input type="text" name="q_btv" class="author-search-input" placeholder="Tìm tiêu đề, tác giả..." value="{{ current_query }}">
+                    <button type="submit" class="author-search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        {% if posts_to_display %}
+            <table class="author-articles-table">
+                <thead>
+                    <tr>
+                        <th>Tiêu đề</th>
+                        <th>Tác giả</th>
+                        <th>Trạng thái</th>
+                        <th>Tags</th>
+                        <th>Ngày gửi</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for post in posts_to_display %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'blog:btv_review_post_detail' post.slug %}" title="{{ post.title }}">{{ post.title|truncatewords:10 }}</a>
+                        </td>
+                        <td>{{ post.author.ho_ten|default:post.author.email }}</td>
+                        <td>
+                            <span class="badge
+                                {% if post.status == post_statuses.NHAP %}status-draft{% endif %}
+                                {% if post.status == post_statuses.CHO_DUYET %}status-pending{% endif %}
+                                {% if post.status == post_statuses.DA_DUYET %}status-approved-editor{% endif %}
+                                {% if post.status == post_statuses.DA_XUAT_BAN %}status-published{% endif %}
+                                {% if post.status == post_statuses.TU_CHOI %}status-rejected{% endif %}
+                            ">
+                                {{ post.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% for tag in post.tags.all|slice:":2" %}<span class="tag-item">{{ tag.ten_tag }}</span>{% if not forloop.last %}, {% endif %}{% empty %}<span class="text-muted-light">Không có</span>{% endfor %}{% if post.tags.all.count > 2 %}<span class="text-muted-light">...</span>{% endif %}
+                        </td>
+                        <td>{{ post.updated_at|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'blog:btv_review_post_detail' post.slug %}" class="action-btn view-btn" title="Xem & Duyệt/Từ chối/Lên lịch"><i class="fas fa-search-plus"></i></a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert-info-custom" style="margin-top: 20px;">
+                {% if current_query %}
+                    Không tìm thấy bài viết nào với từ khóa "{{ current_query }}" trong mục "{{ active_filter_name }}".
+                {% else %}
+                    Không có bài viết nào trong mục "{{ active_filter_name }}".
+                {% endif %}
+            </div>
+        {% endif %}  
+    </div>
+</div>
+{% endblock content %}

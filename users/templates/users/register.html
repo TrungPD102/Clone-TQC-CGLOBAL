@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page_title|default:"Đăng Ký" }}{% endblock %}
+
+{% block content %}
+<div class="container register-container"> {# Thay class cho phù hợp với CSS của bạn #}
+    <h2>{{ page_title|default:"Tạo Tài Khoản Mới" }}</h2>
+    <form method="POST" class="registration-form"> {# Thay class cho phù hợp CSS #}
+        {% csrf_token %}
+        
+        {# Hiển thị lỗi chung của form #}
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {# Hiển thị từng trường của form #}
+        {# Ví dụ cách render với bootstrap-like styling, bạn sẽ tùy chỉnh theo Figma #}
+        {% for field in form %}
+            <div class="form-group mb-3"> {# Giả sử bạn dùng Bootstrap hoặc class tương tự #}
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }} {# Render widget của field #}
+                {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text|safe }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div class="invalid-feedback" style="color: red; font-size: 0.9em;">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        
+        <button type="submit" class="btn btn-primary">Đăng Ký</button> {# Thay class #}
+    </form>
+    <p class="mt-3">Bạn đã có tài khoản? <a href="{% url 'login' %}">Đăng nhập tại đây</a>.</p>
+</div>
+{% endblock %}

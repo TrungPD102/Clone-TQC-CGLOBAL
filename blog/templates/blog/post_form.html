@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %} {% block title %}{{ page_title|default:"Quản lý Bài Viết" }} - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+    {{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div class="container post-form-container" style="margin-top: 30px; margin-bottom: 30px;">
+    <h2>{{ page_title|default:"Bài Viết" }}</h2>
+    <hr>
+    {# QUAN TRỌNG: enctype cho upload file #}
+    <form method="POST" enctype="multipart/form-data" class="styled-form">
+        {% csrf_token %}
+
+        {# Hiển thị lỗi chung của form #}
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger p-2 mb-3">
+                {% for error in form.non_field_errors %}
+                    <p class="mb-0">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {# Render các trường form #}
+        <div class="form-field mb-3">
+            <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.title.errors %}{{ error }}{% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-field mb-3">
+            <label for="{{ form.category.id_for_label }}" class="form-label">{{ form.category.label }}</label>
+            {{ form.category }}
+            {% if form.category.help_text %}<small class="form-text text-muted">{{ form.category.help_text|safe }}</small>{% endif %}
+            {% for error in form.category.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+        </div>
+
+        <div class="form-field mb-3">
+            <label for="{{ form.content.id_for_label }}" class="form-label">{{ form.content.label }}</label>
+            {{ form.content }}
+            {% if form.content.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.content.errors %}{{ error }}{% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="form-field mb-3">
+            <label for="{{ form.image.id_for_label }}" class="form-label">{{ form.image.label }}</label>
+            {{ form.image }}
+            {% if form.image.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.image.errors %}{{ error }}{% endfor %}
+                </div>
+            {% endif %}
+            {% if form.instance.image %}
+                <p class="mt-2">Ảnh hiện tại: <a href="{{ form.instance.image.url }}" target="_blank">{{ form.instance.image.name|truncatechars:30 }}</a></p>
+            {% endif %}
+        </div>
+        
+        {% if form.tags_input %}
+        <div class="form-field mb-4">
+            <label class="form-label">{{ form.tags_input.label }}</label>
+            <div class="tags-checkbox-list p-2 border rounded" style="max-height: 150px; overflow-y: auto;">
+                {# {{ form.tags_input }} #} {# Cách render mặc định có thể không đẹp #}
+                 {% for tag_choice in form.tags_input %}
+                    <div class="form-check">
+                        {{ tag_choice.tag }} {# Input checkbox #}
+                        <label class="form-check-label" for="{{ tags_input.id_for_label }}">
+                            {{ tags_input.choice_label }} {# Tên của tag #}
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+            {% if form.tags_input.errors %}
+                <div class="invalid-feedback d-block">
+                    {% for error in form.tags_input.errors %}{{ error }}{% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <hr>
+        <div class="form-actions mt-3">
+            <button type="submit" name="save_draft" class="btn btn-secondary me-2">
+                <i class="fas fa-save"></i> Lưu Nháp
+            </button>
+            <button type="submit" name="submit_review" class="btn btn-primary">
+                <i class="fas fa-paper-plane"></i> Gửi Duyệt
+            </button>
+            <a href="{% url 'blog:author_posts_list' %}" class="btn btn-outline-secondary ms-2">Hủy</a>
+        </div>
+    </form>
+    {% if original_status == post_statuses.DA_DUYET or original_status == post_statuses.DA_XUAT_BAN %}
+        <div class="alert alert-warning" role="alert">
+            <strong>Lưu ý:</strong> Bài viết này đã được duyệt hoặc xuất bản. Mọi thay đổi sau khi lưu sẽ cần Biên Tập Viên duyệt lại.
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,241 @@
+{% load static %} {# Tải template tag static #}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TQC CGLOBAL - ProjectBlobWeb{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <nav class="top-nav">
+        <div class="container top-nav-content">
+            <div class="top-nav-contact">
+                <span class="contact-item">
+                    <i class="fas fa-phone-alt"></i> <a href="tel:096XXXXXXX">096 XXX XXXX</a> 
+                </span>
+                <span class="contact-item">
+                    <i class="fas fa-envelope"></i> <a href="mailto:info@tqc.vn">info@tqc.vn</a> 
+                </span>
+            </div>
+
+            <div class="top-nav-actions">
+                <div class="search-container">
+                    <form method="GET" action="{% url 'blog:search_results' %}">
+                        {% csrf_token %}
+                        <input type="text" name="q" placeholder="Tìm kiếm..." class="search-input">
+                        <button type="submit" class="search-button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </form>
+                </div>
+
+                {% if user.is_authenticated %}
+                    <div class="user-menu-container">
+                        <button type="button" class="user-menu-button" id="userMenuBtn">
+                            <i class="fas fa-user-circle user-icon"></i>
+                            <span>{{ user.ho_ten|default:user.email|truncatechars:15 }}</span> {# Hiển thị tên, giới hạn ký tự nếu cần #}
+                            <i class="fas fa-caret-down dropdown-icon"></i>
+                        </button>
+                        <div class="user-dropdown-menu" id="userDropdown">
+                            <a href="{% url 'users:profile' %}" class="dropdown-item">Thông tin tài khoản</a>
+                            <a href="#" class="dropdown-item" id="ajaxLogoutBtnTopNav" data-logout-url="{% url 'users:ajax_logout' %}">Đăng xuất</a>
+                        </div>
+                    </div>
+                {% else %}
+                    <button type="button" class="login-button" id="openLoginPopupBtn">Đăng nhập</button>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo-section">
+                <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/TQC%20logo-miijgaCC6UNkZCidtknVeuLodvPRrm.png" alt="TQC Logo" class="logo">
+                <div class="header-text">
+                    <div class="header-title">LIÊN HIỆP CÁC HỘI KHOA HỌC VÀ KỸ THUẬT VIỆT NAM</div>
+                    <div class="header-subtitle">TRUNG TÂM KIỂM NGHIỆM VÀ CHỨNG NHẬN TQC CGLOBAL</div>
+                </div>
+            </div>
+            <div class="certification-logos">
+                <img src="https://i.pinimg.com/736x/8f/3f/4a/8f3f4a603354c7be136d6686a81a496c.jpg" alt="ISO Certification" class="cert-logo">
+                <img src="https://i.pinimg.com/736x/27/ec/41/27ec41dca7762a5eb15b6fed55e1b43e.jpg" class="cert-logo">
+            </div>
+        </div>
+    </header>
+
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="{% url 'blog:home' %}" class="nav-button">Trang chủ</a>
+
+            {% if user.is_authenticated %}
+                {# === VAI TRÒ TÁC GIẢ === #}
+                {% if user.role == "TACGIA" or user.is_superuser or user.role == "ADMIN" %}
+                    <a href="{% url 'blog:author_posts_list' %}" class="nav-button">Bài Viết Của Tôi</a>
+                    <a href="{% url 'blog:create_post' %}" class="nav-button">Tạo Bài Mới</a>
+                {% endif %}
+
+                {# === VAI TRÒ BIÊN TẬP VIÊN === #}
+                {% if user.role == "BIENTAPVIEN" or user.is_superuser or user.role == "ADMIN" %}
+                    <a href="{% url 'blog:btv_manage_posts' %}" class="nav-button">Duyệt Bài Chờ</a>
+                    <a href="{% url 'blog:btv_scheduled_posts' %}" class="nav-button">Lịch Đăng Bài</a>
+                    <a href="{% url 'blog:btv_post_statistics' %}" class="nav-button">Thống Kê Lượt Xem</a>
+                    <a href="{% url 'blog:create_post' %}" class="nav-button">Tạo Bài Mới</a>
+                {% endif %}
+                
+                {# === VAI TRÒ ADMIN === #}
+                {% if user.is_superuser or user.role == "ADMIN" %}
+                    {# <a href="{% url 'users:user_list_admin' %}" class="nav-button">Quản Lý Users</a> #}
+                {% endif %}
+
+            {% else %}
+                <a href="{% url 'blog:gioi_thieu_page' %}" class="nav-button">Giới Thiệu</a>
+                <a href="{% url 'blog:tuyen_dung_page' %}" class="nav-button">Tuyển Dụng</a>
+            {% endif %}
+            
+            <div class="nav-button nav-item-dropdown">
+                <a href="#" class="nav-button">Blog</a>
+                <div class="dropdown-content">
+                    {% if all_blog_categories %}
+                        {% for category in all_blog_categories %}
+                            <a href="{% url 'blog:posts_by_category' category.slug %}">{{ category.ten_de_tai }}</a>
+                        {% endfor %}
+                    {% else %}
+                        <span style="padding: 12px 16px; display: block; color: #ccc; font-size: 14px;">Chưa có đề tài nào.</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+
+        </div>
+    </nav>
+
+    {# Hiển thị messages của Django #}
+    {% if messages %}
+        <div class="container mt-3" style="padding-top: 15px;">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" style="background-color: #d4edda; color: #155724; border-color: #c3e6cb; padding: .75rem 1.25rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: .25rem;">
+                    {{ message }}
+                    {# <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> #}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main class="container" style="padding-top: 20px; padding-bottom: 20px;">
+        {% block content %}
+        <p>Chào mừng đến với trang web của chúng tôi!</p>
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-column">
+                <h3 class="footer-title">Trụ sở chính:</h3>
+                <p class="footer-info">Địa chỉ: Tầu 7, Tòa nhà CT1, KĐT Mỹ Đình - Mễ Trì, phường Mỹ Đình 1, quận Nam Từ Liêm, Tp. Hà Nội</p>
+                <p class="footer-info">Hotline: 096 XXX XXXX</p>
+                <p class="footer-info">Tel: 024 XXXX XXXX</p>
+                <p class="footer-info">Email: info@tqc.vn</p>
+                <p class="footer-info">Website: TQC CGLOBAL, Miền Trung</p>
+            </div>
+            <div class="footer-column">
+                <h3 class="footer-title">Chi nhánh: TQC CGLOBAL Miền Trung:</h3>
+                <p class="footer-info">Địa chỉ: 47 Cao Bá Quát, phường Hòa Minh, quận Liên Chiểu, Đà Nẵng</p>
+                <p class="footer-info">Hotline: 0905 XXX XXX</p>
+                <p class="footer-info">Điện thoại: 0233 XXXX XXXX</p>
+                <p class="footer-info">Email: mienrung@tqc.vn</p>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <p>© {% now "Y" %} TQC CGLOBAL. All rights reserved.</p>
+        </div>
+    </footer>
+
+    {# Popup Đăng nhập #}
+    <div id="loginPopup" class="popup-overlay" style="display:none;">
+        <div class="popup-content">
+            <span class="close-btn" id="closeLoginPopupBtn">&times;</span>
+            <h2>Đăng nhập</h2>
+            <form id="ajaxLoginForm" method="post" data-action-url="{% url 'users:ajax_login' %}">
+                {% csrf_token %}
+                <div class="form-errors-ajax" style="color: red; margin-bottom: 10px;"></div> {# Cho lỗi chung của form login #}
+                <div class="form-group">
+                    <label for="id_ajax_login_email">Email:</label>
+                    <input type="email" name="username" autofocus autocapitalize="none" autocomplete="email" maxlength="254" required id="id_ajax_login_email">
+                </div>
+                <div class="form-group password-group">
+                    <label for="id_ajax_login_password">Mật khẩu:</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" name="password" autocomplete="current-password" required id="id_ajax_login_password">
+                        <i class="fas fa-eye toggle-password"></i> {# Icon ẩn/hiện #}
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit">Đăng nhập</button>
+                <div class="popup-message-ajax" style="margin-top: 10px; text-align: center;"></div>
+                <input type="hidden" name="next" value="{{ request.path }}">
+            </form>
+            <p class="popup-switch">Chưa có tài khoản? <a href="#" id="switchToRegisterBtn">Đăng ký ngay</a></p>
+        </div>
+    </div>
+
+    {# Popup đăng ký tài khoản #}
+    <div id="registerPopup" class="popup-overlay" style="display:none;">
+        <div class="popup-content">
+            <span class="close-btn" id="closeRegisterPopupBtn">&times;</span>
+            <h2>Đăng ký tài khoản</h2>
+            <form id="ajaxRegisterForm" method="POST" data-action-url="{% url 'users:register' %}">
+                {% csrf_token %}
+                <div class="form-errors-ajax" style="color: red; margin-bottom: 10px;"></div>
+
+                <div class="form-group">
+                    <label for="id_ajax_register_ho_ten">Họ và tên:</label>
+                    <input type="text" name="ho_ten" id="id_ajax_register_ho_ten" required>
+                </div>
+                <div class="form-group">
+                    <label for="id_ajax_register_email">Email:</label>
+                    <input type="email" name="email" id="id_ajax_register_email" required>
+                </div>
+                <div class="form-group password-group">
+                    <label for="id_ajax_register_password1">Mật khẩu:</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" name="password1" id="id_ajax_register_password1" required>
+                        <i class="fas fa-eye toggle-password"></i> {# Icon ẩn/hiện #}
+                    </div>
+                </div>
+                <div class="form-group password-group">
+                    <label for="id_ajax_register_password2">Xác nhận mật khẩu:</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" name="password2" id="id_ajax_register_password2" required>
+                        <i class="fas fa-eye toggle-password"></i> {# Icon ẩn/hiện #}
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit">Đăng ký</button>
+                <div class="popup-message-ajax" style="margin-top: 10px; text-align: center;"></div>
+            </form>
+            <p class="popup-switch">Đã có tài khoản? <a href="#" id="switchToLoginBtn">Đăng nhập</a></p>
+        </div>
+    </div>
+
+    <div id="confirmDeletePopup" class="popup-overlay" style="display:none;">
+        <div class="popup-content" style="max-width: 400px;"> {# Kích thước popup nhỏ hơn #}
+            <span class="close-btn" id="closeConfirmDeletePopupBtn">&times;</span>
+            <h2>Xác nhận xóa</h2>
+            <p id="confirmDeleteMessage" style="margin-bottom: 20px; color: #333;">Bạn có chắc chắn muốn xóa bài viết này không? Hành động này không thể hoàn tác.</p>
+            <form id="confirmDeleteForm" method="POST" action="">
+                {% csrf_token %}
+                <div class="popup-actions" style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" id="cancelDeleteBtn" class="btn btn-outline-secondary">Hủy</button>
+                    <button type="submit" id="confirmDeleteSubmitBtn" class="btn btn-danger">Đồng ý xóa</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static 'js/auth_ajax.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_scripts %}{% endblock %} {# Cho các script riêng của từng trang con #}
+</body>
+</html>

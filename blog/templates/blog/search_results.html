@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }} - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+    {{ block.super }}
+    {# Link đến file CSS của trang tìm kiếm #}
+    <link rel="stylesheet" href="{% static 'css/search_results_styles.css' %}">
+    {# <link rel="stylesheet" href="{% static 'css/author_dashboard_styles.css' %}"> #}
+{% endblock %}
+
+{% block content %}
+<div class="container search-results-container"> {# Đã có class container ở đây #}
+    <h1 class="mb-4">{{ page_title }}</h1>
+
+    <form method="GET" action="{% url 'blog:search_results' %}" class="search-again-form">
+        <input type="text" name="q" class="search-input" placeholder="Nhập từ khóa tìm kiếm..." value="{{ query|default_if_none:'' }}">
+        <button type="submit" class="search-button"><i class="fas fa-search"></i> Tìm</button>
+    </form>
+
+    {% if query %}
+        <p class="mb-3">Tìm thấy {{ result_count }} kết quả cho từ khóa "<strong>{{ query }}</strong>".</p>
+        {% if results %}
+            {% for post in results %}
+            <div class="search-result-item">
+                <h3><a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a></h3>
+                <p class="search-result-meta">
+                    Bởi {{ post.author.ho_ten|default:post.author.email }} | Đăng ngày: {{ post.publish_at|date:"d/m/Y"|default:"Chưa xuất bản" }}
+                    {% if post.category %}
+                        | Trong: <a href="{% url 'blog:posts_by_category' post.category.slug %}">{{ post.category.ten_de_tai }}</a>
+                    {% endif %}
+                </p>
+                <p class="search-result-excerpt">{{ post.content|striptags|truncatewords_html:40|safe }}</p>
+                {% if post.tags.all %}
+                    <p class="search-result-tags">
+                        <strong>Tags:</strong>
+                        {% for tag in post.tags.all %}
+                            <a href="{% url 'blog:search_results' %}?q={{ tag.ten_tag|urlencode }}" class="tag-item">#{{ tag.ten_tag }}</a>
+                        {% endfor %}
+                    </p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {# PHÂN TRANG SẼ THÊM Ở ĐÂY SAU #}
+        {% else %}
+            <p class="no-results">Không tìm thấy bài viết nào phù hợp với từ khóa "<strong>{{ query }}</strong>".</p>
+        {% endif %}
+    {% else %}
+        <p class="no-results">Vui lòng nhập từ khóa để bắt đầu tìm kiếm.</p>
+    {% endif %}
+</div>
+{% endblock %}

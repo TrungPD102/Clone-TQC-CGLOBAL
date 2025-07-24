@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ post.title }} - {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/post_detail_styles.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container post-detail-container" style="margin-top: 30px; margin-bottom: 30px;">
+    <article class="post-article">
+        <header class="post-header mb-4">
+            <h1 class="post-title display-5">{{ post.title }}</h1>
+            <p class="post-meta text-muted">
+                Đăng bởi:
+                <span class="author-name">{{ post.author.ho_ten|default:post.author.email }}</span> |
+                Ngày đăng:
+                <time datetime="{{ post.publish_at|date:"Y-m-d" }}">{{ post.publish_at|date:"d/m/Y H:i"|default:post.created_at|date:"d/m/Y H:i" }}</time>
+            </p>
+            <p class="post-meta">
+                {% if post.category %}
+                    | Đề tài: <a href="{% url 'blog:posts_by_category' post.category.slug %}">{{ post.category.ten_de_tai }}</a>
+                {% endif %}
+            </p>
+            {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="img-fluid rounded post-main-image mb-3" style="max-height: 450px; width: 100%; object-fit: cover;">
+            {% endif %}
+        </header>
+
+        <section class="post-content lead">
+            {{ post.content|safe }}
+        </section>
+
+        {% if post.tags.all %}
+        <footer class="post-footer mt-4 pt-3 border-top">
+            <p class="tags-list">
+                <strong>Tags:</strong>
+                {% for tag in post.tags.all %}
+                    <a href="#" class="tag-link me-2">#{{ tag.ten_tag }}</a> {# Link đến trang lọc theo tag (sẽ làm sau) #}
+                {% endfor %}
+            </p>
+        </footer>
+        {% endif %}
+
+        {# Nút chỉnh sửa cho tác giả của bài viết #}
+        {% if user.is_authenticated and user == post.author %}
+            {# Chỉ hiển thị nút sửa nếu bài viết ở trạng thái cho phép sửa (ví dụ: Nháp, Bị từ chối) #}
+            {% if post.status == "NHAP" or post.status == "TUCHOI" %}
+                <div class="author-actions mt-4">
+                    <a href="{% url 'blog:edit_post' post.slug %}" class="btn btn-secondary">
+                        <i class="fas fa-edit"></i> Chỉnh Sửa Bài Viết Này
+                    </a>
+                </div>
+            {% endif %}
+        {% endif %}
+
+    </article>
+
+    {# KHU VỰC HIỂN THỊ PHẢN HỒI CHO TÁC GIẢ #}
+    {% if user.is_authenticated and user == post.author and post.status == post_statuses.TU_CHOI %}
+        {# Lấy phản hồi mới nhất cho bài viết này #}
+        {% with latest_feedback=post.feedbacks.all.first %}
+            {% if latest_feedback %}
+            <section class="feedback-section" id="feedback"> {# Thêm id="feedback" để link từ danh sách có thể nhảy tới #}
+                <h3><i class="fas fa-exclamation-circle"></i> Phản Hồi từ Biên Tập Viên</h3>
+                <div class="reason">
+                    <strong>Lý do từ chối:</strong>
+                    <p style="white-space: pre-wrap;">{{ latest_feedback.reason|linebreaksbr }}</p>
+                </div>
+                {% if latest_feedback.suggestion %}
+                <div class="suggestion">
+                    <strong>Gợi ý chỉnh sửa:</strong>
+                    <p style="white-space: pre-wrap;">{{ latest_feedback.suggestion|linebreaksbr }}</p>
+                </div>
+                {% endif %}
+                <div class="editor-info">
+                    Phản hồi bởi: {{ latest_feedback.editor.ho_ten|default:latest_feedback.editor.email }} vào lúc {{ latest_feedback.created_at|date:"H:i - d/m/Y" }}
+                </div>
+                {% if can_author_edit %}
+                <div class="author-actions mt-4">
+                    <a href="{% url 'blog:edit_post' post.slug %}" class="btn btn-secondary">
+                        <i class="fas fa-edit"></i> Chỉnh Sửa Bài Viết Này
+                    </a>
+                </div>
+                {% elif user.is_authenticated and user == post.author and post.status in post_statuses.DA_DUYET|add:post_statuses.DA_XUAT_BAN %}
+                    {# Nếu đã duyệt/xuất bản, tác giả có thể thấy thông báo hoặc nút "Yêu cầu chỉnh sửa" #}
+                    <div class="author-actions mt-4">
+                        <p class="alert alert-info">Bài viết này đã được duyệt/xuất bản. Để chỉnh sửa, bạn cần gửi yêu cầu xem xét lại.</p>
+                        {# <form method="POST" action="{% url 'blog:request_edit_permission' post.slug %}"> {% csrf_token %} <button type="submit" class="btn btn-warning">Yêu cầu chỉnh sửa</button></form> #}
+                    </div>
+                {% endif %}
+                <div class="author-actions mt-3">
+                    <a href="{% url 'blog:edit_post' post.slug %}" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Chỉnh Sửa Lại Bài Viết
+                    </a>
+                </div>
+            </section>
+            {% endif %}
+        {% endwith %}
+    {% endif %}
+
+
+        {% if can_author_edit %} {# SỬ DỤNG BIẾN MỚI TỪ CONTEXT #}
+            <div class="author-actions mt-4">
+                <a href="{% url 'blog:edit_post' post.slug %}" class="btn btn-secondary">
+                    <i class="fas fa-edit"></i> Chỉnh Sửa Bài Viết Này
+                </a>
+            </div>
+        {% elif user.is_authenticated and user == post.author and post.status in post_statuses.DA_DUYET|add:post_statuses.DA_XUAT_BAN %}
+             {# Nếu đã duyệt/xuất bản, tác giả có thể thấy thông báo hoặc nút "Yêu cầu chỉnh sửa" #}
+             <div class="author-actions mt-4">
+                <p class="alert alert-info">Bài viết này đã được duyệt/xuất bản. Để chỉnh sửa, bạn cần gửi yêu cầu xem xét lại.</p>
+                {# <form method="POST" action="{% url 'blog:request_edit_permission' post.slug %}"> {% csrf_token %} <button type="submit" class="btn btn-warning">Yêu cầu chỉnh sửa</button></form> #}
+                {# Chức năng "Yêu cầu chỉnh sửa" sẽ cần view và logic riêng #}
+            </div>
+        {% endif %}
+
+</div>
+{% endblock %}
